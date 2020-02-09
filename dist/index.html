@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Radicals Battle</title>
+	</head>
+	<body>
+		<h1>Radicals Battle</h1>
+		<button id="start">Fight</button>
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+const socket = io();
+let playing = false;
+const startButton = document.querySelector('#start');
+
+startButton.addEventListener('click', function () {
+	if (!playing) {
+		socket.emit('search');
+	}
+	document.body.removeChild(startButton);
+});
+
+socket.on('start', function (data) {
+	console.log(data);
+});
+
+socket.on('update', function (data) {
+	console.log(data);
+});
+
+socket.on('question', function (data) {
+	console.log(data);
+});
+
+socket.on('leave', function (data) {
+	console.log(data);
+	playing = false;
+	document.body.appendChild(button);
+});
+
+socket.on('finish', function (data) {
+	console.log(data);
+	playing = false;
+	document.body.appendChild(button);
+});
+
+socket.on('solution', function (data) {
+	console.log(data);
+});
+		</script>
+	</body>
+</html>
+
