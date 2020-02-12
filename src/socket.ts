@@ -6,7 +6,6 @@ const startSocket = function (server) {
 	let onlineUsers: User[] = []; // All connected users
 
 	io.on('connection', function (socket: Socket) {
-		console.log('A user connected');
 		const user: User = {
 			socket: socket,
 			searching: false,

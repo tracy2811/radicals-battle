@@ -9,7 +9,6 @@ var startSocket = function (server) {
     var io = socket_io_1.default(server);
     var onlineUsers = []; // All connected users
     io.on('connection', function (socket) {
-        console.log('A user connected');
         var user = {
             socket: socket,
             searching: false,
