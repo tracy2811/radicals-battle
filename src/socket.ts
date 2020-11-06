@@ -1,7 +1,8 @@
 import socketIO, { Socket, } from 'socket.io';
 import Game, { User, Result, } from './game';
+import { Server, } from 'http';
 
-const startSocket = function (server) {
+const startSocket = function (server: Server) {
 	const io = socketIO(server);
 	let onlineUsers: User[] = []; // All connected users
 
