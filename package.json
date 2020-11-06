@@ -7,7 +7,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node dist/server.js",
     "dev": "nodemon src/server.ts",
     "build": "tsc -p ."
   },
@@ -18,10 +18,14 @@
     "@types/node": "^13.7.0",
     "@types/socket.io": "^2.1.4",
     "@types/socket.io-client": "^1.4.32",
+    "nodemon": "^2.0.4",
     "ts-node": "^8.6.2",
     "typescript": "^3.7.5"
   },
   "dependencies": {
+    "@types/compression": "^1.7.0",
+    "@types/helmet": "0.0.47",
+    "@types/uuid": "^8.0.0",
     "compression": "^1.7.4",
     "express": "^4.17.1",
     "helmet": "^3.21.2",

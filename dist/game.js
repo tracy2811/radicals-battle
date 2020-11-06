@@ -1,10 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var radicals_1 = require("./radicals");
-var v4_1 = __importDefault(require("uuid/v4"));
+var uuid_1 = require("uuid");
 var Game = /** @class */ (function () {
     function Game(players, total, nChoices) {
         if (total === void 0) { total = 7; }
@@ -15,7 +12,7 @@ var Game = /** @class */ (function () {
         if (nChoices <= 1) {
             throw new Error('Invalid number of choices');
         }
-        this.id = v4_1.default();
+        this.id = uuid_1.v4();
         this.players = players;
         this.total = total;
         this.questions = [];

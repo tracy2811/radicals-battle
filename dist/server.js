@@ -23,5 +23,5 @@ app.get('/radicals', function (req, res) {
     res.send(radicals_1.radicals);
 });
 server.listen(3000, function () {
-    console.log('Server running...');
+    console.log('Server running on port 3000...');
 });
