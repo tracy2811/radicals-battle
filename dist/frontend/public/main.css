@@ -123,3 +123,10 @@ button:hover {
 .message {
     margin: 5rem;
 }
+
+footer {
+    position: fixed;
+    bottom: 0.5rem;
+    left: 0;
+    right: 0;
+}
