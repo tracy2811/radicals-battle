@@ -1,6 +1,6 @@
 import { Radical, randomRadicals, } from './radicals';
 import { Socket, } from 'socket.io';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 
 interface QuestionFormat {
 	question: string;
