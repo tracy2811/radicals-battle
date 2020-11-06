@@ -100,11 +100,9 @@
             }
 
             chos[selectedIndex].classList.add('correct');
-            if (selected) {
-                if (selectedIndex !== selected) {
+            if (selectedIndex !== selected) {
                     chos[selected].classList.add('incorrect');
                 }
-            }
             selected = null;
         };
 

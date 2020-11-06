@@ -55,6 +55,7 @@ button {
 
 button:hover {
     cursor: pointer;
+    box-shadow: 0.2rem 0.2rem #9ba4b4, 0 0 2rem 0.2rem #9ba4b4;
 }
 
 #start, .message > p {
@@ -63,7 +64,6 @@ button:hover {
 
 #start:hover {
     font-size: 4.5rem;
-    box-shadow: 0.2rem 0.2rem #9ba4b4, 0 0 2rem 0.2rem #9ba4b4;
 }
 
 #warrior {
@@ -84,7 +84,7 @@ button:hover {
         border: none;
 }
 
-.incorrect {
+.incorrect, .selected {
 	background: #9ba4b4;
         color: #394867;
         border: none;
@@ -117,11 +117,15 @@ button:hover {
     grid-template-rows: 1fr 1fr;
     grid-gap: 1rem;
     max-height: 50rem;
-    justify-content:
 }
 
 .message {
     margin: 5rem;
+}
+
+.message > p {
+    font-size: 5rem;
+    font-weight: bold;
 }
 
 footer {
