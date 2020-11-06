@@ -1,8 +1,125 @@
+html {
+    font-family: 'Noto Serif TC', serif;
+    text-align: center;
+    font-size: 10px;
+    background-color: #f1f6f9;
+    color: #14274e;
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    max-width: 960px;
+    margin: auto;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    letter-spacing: 0.2em;
+    font-size: 2rem;
+}
+
+#root {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    height: 80%;
+    margin: auto;
+    align-items: center;
+    padding-top: 3rem;
+}
+
+#title {
+    height: 20%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+h1 {
+    font-size: 5.5rem;
+}
+
+button {
+    border: 0.3rem solid #394867;
+    background-color: #f1f6f9;
+    font-size: 3rem;
+    border-radius: 0.5rem;
+    padding: 1rem 2rem;
+    display: block;
+    color: #14274e;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+#start, .message > p {
+    font-size: 4rem;
+}
+
+#start:hover {
+    font-size: 4.5rem;
+    box-shadow: 0.2rem 0.2rem #9ba4b4, 0 0 2rem 0.2rem #9ba4b4;
+}
+
+#warrior {
+    position: fixed;
+    bottom: 0;
+    height: 100%;
+    left: 10vmin;
+    z-index: -999;
+}
+
+.animation {
+    height: 20rem;
+}
+
 .correct {
-	background: #0f0;
+	background: #14274e;
+        color: #f1f6f9;
+        border: none;
 }
 
 .incorrect {
-	background: #f00;
+	background: #9ba4b4;
+        color: #394867;
+        border: none;
 }
 
+#info {
+    text-align: right;
+    align-self: stretch;
+}
+
+#question {
+    align-items: stretch;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+    align-self: stretch;
+}
+
+#question > h2 {
+    font-size: 5rem;
+    flex: 1;
+}
+
+#ops {
+    flex: 4;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-gap: 1rem;
+    max-height: 50rem;
+    justify-content:
+}
+
+.message {
+    margin: 5rem;
+}

@@ -1,164 +1,251 @@
 (function start() {
-	const socket = io();
-	const startButton = document.querySelector('#start');
-	const searchingMessage = document.createElement('p');
-	let playing = false;
-	let info;
-	let question;
+    const socket = io();
+    const root = document.querySelector('#root');
+    const startButton = document.querySelector('#start');
+    const warrior = document.querySelector('#warrior');
+    const createMessage = function(msg, path, loop, autoplay) {
+        const message = document.createElement('div');
+        const animationContainer = document.createElement('div');
+        const text = document.createElement('p');
+        const animation = bodymovin.loadAnimation({
+            container: animationContainer,
+            path,
+            renderer: 'svg',
+            loop,
+            autoplay,
+        });
+        message.appendChild(animationContainer);
+        animationContainer.classList.add('animation');
+        message.classList.add('message');
+        text.textContent = msg;
+        if (msg) {
+            message.appendChild(text);
+        }
+        return { message, animation, animationContainer };
+    };
+    const {
+        message: searchingMessage,
+        animationContainer: messageAnimationContainer,
+    } = createMessage('Finding opponent...', 'search.json', true, true);
+    const {
+        message: winMessage,
+        animation: winAnimation,
+        animationContainer: winAnimationContainer,
+    } = createMessage('You win!', 'win.json', true, false);
+    const {
+        message: drawMessage,
+        animation: drawAnimation,
+        animationContainer: drawAnimationContainer,
+    } = createMessage('It\'s a tie!', 'draw.json', true, false);
+    const {
+        message: loseMessage,
+        animation: loseAnimation,
+        animationContainer: loseAnimationContainer,
+    } = createMessage('You lose!', 'lose.json', true, false);
+    const {
+        message: leaveMessage,
+        animation: leaveAnimation,
+        animationContainer: leaveAnimationContainer,
+    } = createMessage('Opponent left!', 'leave.json', true, false);
 
-	searchingMessage.textContent = 'Finding opponent...';
+    let playing = false;
+    let info;
+    let question;
 
-	const Question  = function (question, choices) {
-		const wrapper = document.createElement('div');
-		const ques = document.createElement('h3');
-		const chos = [];
-		let selected;
+    bodymovin.loadAnimation({
+            container: warrior,
+            path: 'warrior.json',
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+        });
 
-		wrapper.appendChild(ques);
-		for (let i = 0; i < choices.length; i += 1) {
-			const choice = document.createElement('button');
-			chos.push(choice);
-			wrapper.appendChild(choice);
-			choice.addEventListener('click', function (e) {
-				choice.classList.add('selected');
-				socket.emit('answer', i);
-				selected = i;
-			});
-		};
+    const Question = function (question, choices) {
+        const wrapper = document.createElement('div');
+        const ques = document.createElement('h2');
+        const chosWrapper = document.createElement('div');
+        const chos = [];
+        let selected;
 
-		const updateQuestion = function (question, choices) {
-			ques.textContent = question;
-			for (let i = 0; i < choices.length; i += 1) {
-				chos[i].textContent = choices[i];
-				chos[i].classList.remove('selected');
-				chos[i].classList.remove('correct');
-				chos[i].classList.remove('incorrect');
-			}
-		};
+        ques.textContent = question;
+        wrapper.appendChild(ques);
+        wrapper.appendChild(chosWrapper);
+        wrapper.id = 'question';
+        chosWrapper.id = 'ops';
 
-		const updateSolution = function (radicals, selectedIndex) {
-			for (let i = 0; i < radicals.length; i += 1) {
-				chos[i].textContent = `${radicals[i].radical} ${radicals[i].meaning}`;
-			}
+        for (let i = 0; i < choices.length; i += 1) {
+            const choice = document.createElement('button');
+            chos.push(choice);
+            chosWrapper.appendChild(choice);
+            choice.addEventListener('click', function (e) {
+                choice.classList.add('selected');
+                socket.emit('answer', i);
+                selected = i;
+            });
+        };
 
-			chos[selectedIndex].classList.add('correct');
-			if (selected && selectedIndex !== selected) {
-				chos[selected].classList.add('incorrect');
-			}
-			selected = null;
-		};
+        const updateQuestion = function (question, choices) {
+            ques.textContent = question;
+            for (let i = 0; i < choices.length; i += 1) {
+                chos[i].textContent = choices[i];
+                chos[i].classList.remove('selected');
+                chos[i].classList.remove('correct');
+                chos[i].classList.remove('incorrect');
+            }
+        };
 
-		updateQuestion(question, choices);
-		return {
-			dom: wrapper,
-			updateQuestion,
-			updateSolution,
-		};
-	};
+        const updateSolution = function (radicals, selectedIndex) {
+            for (let i = 0; i < radicals.length; i += 1) {
+                chos[i].textContent = `${radicals[i].radical} ${radicals[i].meaning}`;
+            }
 
-	const GameInfo = function (totalQuestion, player, playerOpponent) {
-		const wrapper = document.createElement('div');
-		const total = document.createElement('h2');
-		const you = document.createElement('h3');
-		const opponent = document.createElement('h3');
+            chos[selectedIndex].classList.add('correct');
+            if (selected) {
+                if (selectedIndex !== selected) {
+                    chos[selected].classList.add('incorrect');
+                }
+            }
+            selected = null;
+        };
 
-		wrapper.appendChild(total);
-		wrapper.appendChild(you);
-		wrapper.appendChild(opponent);
+        updateQuestion(question, choices);
+        return {
+            dom: wrapper,
+            updateQuestion,
+            updateSolution,
+        };
+    };
 
-		const updateScore = function (totalQuestion, player, playerOpponent) {
+    const GameInfo = function (totalQuestion, player, playerOpponent) {
+        const wrapper = document.createElement('div');
+        const total = document.createElement('p');
+        const you = document.createElement('p');
+        const opponent = document.createElement('p');
 
-			total.textContent = `Total: ${totalQuestion}`;
-			you.textContent = `You: ${player.nCorrect}/${player.currentQuestionIndex}`;
-			opponent.textContent = `Opponent: ${playerOpponent.nCorrect}/${playerOpponent.currentQuestionIndex}`;
+        wrapper.appendChild(total);
+        wrapper.appendChild(you);
+        wrapper.appendChild(opponent);
+        wrapper.id = 'info'
 
-		};
+        const updateScore = function (totalQuestion, player, playerOpponent) {
+            total.textContent = `Total:   ${totalQuestion}`;
+            you.textContent = `You: ${player.nCorrect}/${player.currentQuestionIndex}`;
+            opponent.textContent = `Opponent: ${playerOpponent.nCorrect}/${playerOpponent.currentQuestionIndex}`;
+        };
 
-		updateScore(totalQuestion, player, playerOpponent);
+        updateScore(totalQuestion, player, playerOpponent);
+        return {
+            dom: wrapper,
+            updateScore,
+        };
+    };
 
-		return {
-			dom: wrapper,
-			updateScore,
-		};
-	};
 
+    startButton.addEventListener('click', function () {
+        if (!playing) {
+            socket.emit('search');
+            clearDOM();
+            if (warrior.parentNode) {
+                warrior.parentNode.removeChild(warrior);
+            }
+            root.appendChild(searchingMessage);
+        }
+    });
 
-	startButton.addEventListener('click', function () {
-		if (!playing) {
-			socket.emit('search');
-			document.body.appendChild(searchingMessage);
-			document.body.removeChild(startButton);
-		}
-	});
+    socket.on('start', function (data) {
+        root.removeChild(searchingMessage);
+        playing = true;
+        let playerIndex = data.players[0].id === socket.id ? 0 : 1;
+        if (!info) {
+            info = GameInfo(data.totalQuestion, data.players[playerIndex], data.players[1-playerIndex]);
+            root.appendChild(info.dom);
+        } else {
+            info.updateScore(data.totalQuestion, data.players[playerIndex], data.players[1-playerIndex]);
+        }
+    });
 
-	socket.on('start', function (data) {
-		document.body.removeChild(searchingMessage);
-		playing = true;
-		let playerIndex = data.players[0].id === socket.id ? 0 : 1;
-		if (!info) {
-			info = GameInfo(data.totalQuestion, data.players[playerIndex], data.players[1-playerIndex]);
-			document.body.appendChild(info.dom);
-		} else {
-			info.updateScore(data.totalQuestion, data.players[playerIndex], data.players[1-playerIndex]);
-		}
-	});
+    socket.on('update', function (data) {
+        if (info) {
+            let playerIndex = data.players[0].id === socket.id ? 0 : 1;
+            info.updateScore(data.totalQuestion, data.players[playerIndex], data.players[1-playerIndex]);
+        }
+    });
 
-	socket.on('update', function (data) {
-		if (info) {
-			let playerIndex = data.players[0].id === socket.id ? 0 : 1;
-			info.updateScore(data.totalQuestion, data.players[playerIndex], data.players[1-playerIndex]);
-		}
-	});
+    socket.on('question', function (data) {
+        if (!question) {
+            question = Question(data.question, data.choices);
+            root.appendChild(question.dom);
+        } else {
+            setTimeout(function () {
+                if (question) {
+                    question.updateQuestion(data.question, data.choices);
+                }
+            }, 1700);
+        }
+    });
 
-	socket.on('question', function (data) {
-		if (!question) {
-			question = Question(data.question, data.choices);
-			document.body.appendChild(question.dom);
-		} else {
-			setTimeout(function () {
-				if (question) {
-					question.updateQuestion(data.question, data.choices);
-				}
-			}, 1000);
-		}
-	});
+    socket.on('leave', function (data) {
+        playing = false;
+        clearDOM();
+        root.appendChild(leaveMessage);
+        leaveAnimation.goToAndPlay(0, false);
+        restartState();
+    });
 
-	socket.on('leave', function (data) {
-		playing = false;
-		alert('Opponent left');
-		clearDOM();
-	});
+    socket.on('finish', function (data) {
+        playing = false;
+        let playerIndex = data.players[0].id === socket.id ? 0 : 1;
+        clearDOM();
+        if (data.players[playerIndex].nCorrect > data.players[1-playerIndex].nCorrect) {
+            root.appendChild(winMessage);
+            winAnimation.goToAndPlay(0, false);
+        } else if (data.players[playerIndex].nCorrect < data.players[1-playerIndex].nCorrect) {
+            root.appendChild(loseMessage);
+            loseAnimation.goToAndPlay(0, false);
+        } else {
+            root.appendChild(drawMessage);
+            drawAnimation.goToAndPlay(0, false);
+        }
+        restartState();
+    });
 
-	socket.on('finish', function (data) {
-		playing = false;
-		let playerIndex = data.players[0].id === socket.id ? 0 : 1;
-		if (data.players[playerIndex].nCorrect > data.players[1-playerIndex].nCorrect) {
-			alert('You win!');
-		} else if (data.players[playerIndex].nCorrect < data.players[1-playerIndex].nCorrect) {
-			alert('You lose!');
-		} else {
-			alert('It\'t a tie!');
-		}
-		clearDOM();
-	});
+    socket.on('solution', function (data) {
+        if (question) {
+            question.updateSolution(data.radicals, data.selectedIndex);
+        }
+    });
 
-	socket.on('solution', function (data) {
-		if (question) {
-			question.updateSolution(data.radicals, data.selectedIndex);
-		}
-	});
+    const restartState = function () {
+        info = null;
+        question = null;
+        root.appendChild(startButton);
+    };
 
-	const clearDOM = function () {
-		if (info) {
-			document.body.removeChild(info.dom);
-			info = null;
-		}
-		if (question) {
-			document.body.removeChild(question.dom);
-			question = null;
-		}
-		document.body.appendChild(startButton);
-
-	};
+    const clearDOM = function () {
+        if (searchingMessage.parentNode) {
+            searchingMessage.parentNode.removeChild(searchingMessage);
+        }
+        if (startButton.parentNode) {
+            startButton.parentNode.removeChild(startButton);
+        }
+        if (info && info.dom.parentNode) {
+            info.dom.parentNode.removeChild(info.dom)
+        };
+        if (question && question.dom.parentNode) {
+            question.dom.parentNode.removeChild(question.dom);
+        }
+        if (winMessage.parentNode) {
+            winMessage.parentNode.removeChild(winMessage);
+        }
+        if (loseMessage.parentNode) {
+            loseMessage.parentNode.removeChild(loseMessage);
+        }
+        if (drawMessage.parentNode) {
+            drawMessage.parentNode.removeChild(drawMessage);
+        }
+        if (leaveMessage.parentNode) {
+            leaveMessage.parentNode.removeChild(leaveMessage);
+        }
+    }
 })();
 
