@@ -23,7 +23,7 @@ app.get('/radicals', function (req: Request, res: Response) {
 	res.send(radicals);
 });
 
-server.listen(3000, function () {
+server.listen(PORT, function () {
 	console.log(`Server running on port ${PORT}...`);
 });
 

@@ -23,6 +23,6 @@ app.get('/', function (req, res) {
 app.get('/radicals', function (req, res) {
     res.send(radicals_1.radicals);
 });
-server.listen(3000, function () {
+server.listen(PORT, function () {
     console.log("Server running on port " + PORT + "...");
 });
