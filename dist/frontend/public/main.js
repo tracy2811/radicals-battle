@@ -53,12 +53,12 @@
     let question;
 
     bodymovin.loadAnimation({
-            container: warrior,
-            path: 'warrior.json',
-            renderer: 'svg',
-            loop: true,
-            autoplay: true,
-        });
+        container: warrior,
+        path: 'warrior.json',
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+    });
 
     const Question = function (question, choices) {
         const wrapper = document.createElement('div');
@@ -78,11 +78,17 @@
             chos.push(choice);
             chosWrapper.appendChild(choice);
             choice.addEventListener('click', function (e) {
-                choice.classList.add('selected');
-                socket.emit('answer', i);
-                selected = i;
+                if (selected === undefined || selected === null) {
+                    choice.classList.add('selected');
+                    socket.emit('answer', i);
+                    selected = i;
+                }
             });
         };
+
+        const selectSolution = function(index) {
+            chos[index].click();
+        }
 
         const updateQuestion = function (question, choices) {
             ques.textContent = question;
@@ -100,9 +106,10 @@
             }
 
             chos[selectedIndex].classList.add('correct');
+            chos[selectedIndex].classList.remove('selected');
             if (selectedIndex !== selected) {
-                    chos[selected].classList.add('incorrect');
-                }
+                chos[selected].classList.add('incorrect');
+            }
             selected = null;
         };
 
@@ -111,6 +118,7 @@
             dom: wrapper,
             updateQuestion,
             updateSolution,
+            selectSolution,
         };
     };
 
@@ -244,6 +252,23 @@
         if (leaveMessage.parentNode) {
             leaveMessage.parentNode.removeChild(leaveMessage);
         }
-    }
+    };
+
+    document.addEventListener('keyup', (event) => {
+        const keyName = event.key;
+        if (root.contains(startButton)) {
+            startButton.click();
+        } else if (playing && question) {
+            if (keyName === '1' || keyName.toLowerCase() === 'a') {
+                question.selectSolution(0);
+            } else if (keyName === '2' || keyName.toLowerCase() === 'b') {
+                question.selectSolution(1);
+            } else if (keyName === '3' || keyName.toLowerCase() === 'c') {
+                question.selectSolution(2);
+            } else if (keyName === '4' || keyName === 'd') {
+                question.selectSolution(3);
+            }
+        }
+    });
 })();
 
