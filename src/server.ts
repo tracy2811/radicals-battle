@@ -8,6 +8,7 @@ import path from 'path';
 
 const app: Application = express();
 const server: any = http.createServer(app);
+const PORT = process.env.PORT || 80;
 startSocket(server);
 
 app.use(helmet());
@@ -23,6 +24,6 @@ app.get('/radicals', function (req: Request, res: Response) {
 });
 
 server.listen(3000, function () {
-	console.log('Server running on port 3000...');
+	console.log(`Server running on port ${PORT}...`);
 });
 

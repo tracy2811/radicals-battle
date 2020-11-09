@@ -12,6 +12,7 @@ var helmet_1 = __importDefault(require("helmet"));
 var path_1 = __importDefault(require("path"));
 var app = express_1.default();
 var server = http_1.default.createServer(app);
+var PORT = process.env.PORT || 80;
 socket_1.default(server);
 app.use(helmet_1.default());
 app.use(compression_1.default());
@@ -23,5 +24,5 @@ app.get('/radicals', function (req, res) {
     res.send(radicals_1.radicals);
 });
 server.listen(3000, function () {
-    console.log('Server running on port 3000...');
+    console.log("Server running on port " + PORT + "...");
 });
