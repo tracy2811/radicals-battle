@@ -27,7 +27,7 @@
     "@types/helmet": "0.0.47",
     "@types/uuid": "^8.0.0",
     "compression": "^1.7.4",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "helmet": "^3.21.2",
     "path": "^0.12.7",
     "socket.io": "^2.3.0",
